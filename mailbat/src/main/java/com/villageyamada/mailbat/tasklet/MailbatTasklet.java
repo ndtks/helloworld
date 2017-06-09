@@ -31,7 +31,7 @@ public class MailbatTasklet implements Tasklet {
 			for (Message msg : messages) {
 				if (msg != null) {
 					if (!(msg.getContent() instanceof Multipart)) {
-						logger.info(String.format("件名", msg.getSubject()));
+						logger.info(String.format("件名: %s", msg.getSubject()));
 					} else {
 						logger.info("can not handle multipart mails. (ToT)/~~~");
 					}
