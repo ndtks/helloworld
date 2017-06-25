@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.integration.mail.MailReceiver;
 import org.springframework.integration.mail.Pop3MailReceiver;
 
 import com.villageyamada.mailbat.listener.MailbatListener;
@@ -34,7 +33,7 @@ public class BatchConfig {
 	private MailbatTasklet mailBatTasklet;
 
 	@Bean
-	public MailReceiver pop3MailReceiver() {
+	public Pop3MailReceiver pop3MailReceiver() {
 		return new Pop3MailReceiver(
 				env.getProperty("pop3.host"),
 				env.getProperty("pop3.username"),
