@@ -40,53 +40,15 @@ public class MailbatTasklet implements Tasklet {
 					continue;
 				}
 				if (((String)msg.getHeaders().get("contentType")).equals("application/octet-stream")) {
-					logger.info("can not handle multipart mails. (ToT)/~~~");
+					logger.info("添付ファイルありのメールはひとまず無視します。");
 					continue;
 				}
-				logger.info(String.format("contentType: %s", msg.getHeaders().get("contentType")));
-//				if (!(msg.getContent() instanceof Multipart)) {
-//					headers = msg.getAllHeaders();
-//					logger.info("-----");
-//					logger.info(String.format("件名: %s", msg.getSubject()));
-//					logger.info(String.format("送信元: %s", msg.getFrom()[0].toString()));
-//					logger.info(String.format("送信日: %s", msg.getSentDate()));
-//					logger.info(String.format("ContentType: %s", msg.getContentType()));
-//					logger.info(String.format("本文: %s", msg.getContent().toString().substring(0, 20)));
-//					mailDao.regMail(msg);
-////					while (headers.hasMoreElements()) {
-////						Header header = (Header)headers.nextElement();
-////						String value = header.getValue();
-////						if (value != null && value.length() > 40) {
-////							value = value.substring(0, 40) + "...";
-////						}
-////						logger.info(String.format("%s: '%s'", header.getName(), value));
-////					}
-//					logger.info("-----");
-//				} else {
-//					logger.info("can not handle multipart mails. (ToT)/~~~");
-//				}
+				mailDao.regMail(msg);
 			}
 		} catch (MessagingException e) {
 			logger.error("メール受信でエラーが発生。");
 			logger.error(e.getMessage());
-//		} catch (IOException e) {
-//			logger.error("メール本文の取得でエラーが発生。");
-//			logger.error(e.getMessage());
 		}
-		checkIfTablesExists();
 		return RepeatStatus.FINISHED;
-	}
-
-	private void checkIfTablesExists() {
-		if (mailDao.checkIfTableExists("mail_header")) {
-			logger.info("table 'mail_header' exists in maildb.");
-		} else {
-			logger.error("table 'mail_header' does not exists in maildb.");
-		}
-		if (mailDao.checkIfTableExists("mail_body")) {
-			logger.info("table 'mail_body' exists in maildb.");
-		} else {
-			logger.error("table 'mail_body' does not exists in maildb.");
-		}
 	}
 }
