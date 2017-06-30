@@ -1,5 +1,7 @@
 package com.villageyamada.mailbat.tasklet;
 
+import java.util.Date;
+
 import javax.mail.MessagingException;
 
 import org.slf4j.Logger;
@@ -42,6 +44,15 @@ public class MailbatTasklet implements Tasklet {
 				if (((String)msg.getHeaders().get("contentType")).equals("application/octet-stream")) {
 					logger.info("添付ファイルありのメールはひとまず無視します。");
 					continue;
+				}
+				msg.getHeaders().forEach((k, v) -> {
+					if (!"mail_raw".equals(k)) {
+						logger.info(String.format("%s: %s", k, v));
+					}
+				});
+				if (msg.getHeaders().containsKey("timestamp")) {
+					Date d = new Date((long)msg.getHeaders().get("timestamp"));
+					logger.info(String.format("timestamp: %s", d));
 				}
 				mailDao.regMail(msg);
 			}
