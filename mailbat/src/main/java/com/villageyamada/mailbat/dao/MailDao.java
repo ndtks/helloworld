@@ -13,6 +13,8 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.villageyamada.mailbat.common.MailbatUtil;
+
 @Component
 public class MailDao {
 
@@ -50,14 +52,14 @@ public class MailDao {
 				+ ")";
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("id", id);
-		paramMap.put("mail_from", (String)headers.get("mail_from"));
-		paramMap.put("mail_to", String.join(",", (String[])headers.get("mail_to")));
-		paramMap.put("mail_cc", String.join(",", (String[])headers.get("mail_cc")));
-		paramMap.put("mail_replyto", (String)headers.get("mail_replyTo"));
-		paramMap.put("mail_subject", (String)headers.get("mail_subject"));
+		paramMap.put("mail_from", MailbatUtil.convert(headers.get("mail_from")));
+		paramMap.put("mail_to", MailbatUtil.convert(headers.get("mail_to")));
+		paramMap.put("mail_cc", MailbatUtil.convert(headers.get("mail_cc")));
+		paramMap.put("mail_replyto", MailbatUtil.convert(headers.get("mail_replyTo")));
+		paramMap.put("mail_subject", MailbatUtil.convert(headers.get("mail_subject")));
 		paramMap.put("mail_raw", headers.get("mail_raw").toString());
-		paramMap.put("mail_contenttype", (String)headers.get("mail_contentType"));
-		paramMap.put("contenttype", (String)headers.get("contentType"));
+		paramMap.put("mail_contenttype", MailbatUtil.convert(headers.get("mail_contentType")));
+		paramMap.put("contenttype", MailbatUtil.convert(headers.get("contentType")));
 		paramMap.put("mail_raw_md5", DigestUtils.md5Hex(headers.get("mail_raw").toString()));
 		jdbcTemplate.update(sql, paramMap);
 	}
