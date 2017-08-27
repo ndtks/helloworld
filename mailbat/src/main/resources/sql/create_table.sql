@@ -1,3 +1,19 @@
+drop table if exists m_user;
+drop table if exists m_group;
+drop table if exists m_user_grp;
+drop table if exists m_account;
+drop table if exists m_cond_type;
+drop table if exists m_condition;
+drop table if exists m_filter;
+drop table if exists m_forward;
+drop table if exists m_forward_grp;
+drop table if exists m_forward_user;
+drop table if exists d_mail_header;
+drop table if exists d_mail_body;
+drop table if exists d_mail_to;
+drop table if exists d_mail_cc;
+drop table if exists d_mail_fwd_log;
+
 create table m_user (
 	user_id int NOT NULL,
 	user_name varchar(80) NOT NULL,
@@ -80,7 +96,7 @@ create table m_condition (
 create table m_filter (
 	filter_id int NOT NULL,
 	cond_id int NOT NULL,
-	and_flg int NOT NULL,
+	or_flg int NOT NULL,
 	created timestamp default current_timestamp,
 	created_by int,
 	updated timestamp default current_timestamp,
