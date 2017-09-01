@@ -117,7 +117,7 @@ public class MailDao {
 	 * @param msg
 	 * @return true:登録済 / false:未登録
 	 */
-	public boolean isMailRegistered(Message msg) {
+	public boolean isMailRegistered(Message<?> msg) {
 		String sql = "select count(*) from mail_header"
 				+ " where mail_raw_md5 = :mailRawMd5";
 		Map<String, Object> paramMap = new HashMap<>();

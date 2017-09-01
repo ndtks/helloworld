@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+	"-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+	"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<classPathEntry location="C:\Program Files\MySQL\Connector.J 5.1\mysql-connector-java-5.1.40-bin.jar"/>
+	<context id="context1">
+		<jdbcConnection
+				driverClass="com.mysql.jdbc.Driver"
+				connectionURL="jdbc:mysql://localhost:3306/maildb"
+				userId="hoge"
+				password="hogehoge"/>
+		<javaModelGenerator
+				targetPackage="com.villageyamada.mailbat.db.models.mybatis"
+				targetProject="mailbat/src/main/java"/>
+		<sqlMapGenerator
+				targetPackage="com.villageyamada.mailbat.db.clients.mybatis"
+				targetProject="mailbat/src/main/resources"/>
+		<javaClientGenerator
+				targetPackage="com.villageyamada.mailbat.db.clients.mybatis"
+				targetProject="mailbat/src/main/java"
+				type="XMLMAPPER"/>
+		<table schema="mailbat" tableName="d_mail_body"/>
+		<table schema="mailbat" tableName="d_mail_cc"/>
+		<table schema="mailbat" tableName="d_mail_fwd_log"/>
+		<table schema="mailbat" tableName="d_mail_header"/>
+		<table schema="mailbat" tableName="d_mail_to"/>
+		<table schema="mailbat" tableName="m_account"/>
+		<table schema="mailbat" tableName="m_cond_type"/>
+		<table schema="mailbat" tableName="m_condition"/>
+		<table schema="mailbat" tableName="m_filter"/>
+		<table schema="mailbat" tableName="m_forward"/>
+		<table schema="mailbat" tableName="m_forward_grp"/>
+		<table schema="mailbat" tableName="m_forward_user"/>
+		<table schema="mailbat" tableName="m_group"/>
+		<table schema="mailbat" tableName="m_user"/>
+		<table schema="mailbat" tableName="m_user_grp"/>
+		<table schema="mailbat" tableName="mail_body"/>
+		<table schema="mailbat" tableName="mail_header"/>
+	</context>
+</generatorConfiguration>
