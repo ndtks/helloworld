@@ -1,12 +1,15 @@
 package com.villageyamada.mailbat.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.mail.Pop3MailReceiver;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
@@ -21,7 +24,24 @@ public class MailDao {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private NamedParameterJdbcTemplate namedJdbcTemplate;
+
+	public Map<Integer, Pop3MailReceiver> getPop3MailReceiverMap() {
+		String sql = "select acc_id, pop3_host, pop3_user, pop3_pass from m_account order by acc_id";
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql);
+		Map<Integer, Pop3MailReceiver> map = new HashMap<>();
+		for (Map<String, Object> result : resultList) {
+			map.put((Integer)result.get("acc_id"),
+					new Pop3MailReceiver(
+							(String)result.get("pop3_host"),
+							(String)result.get("pop3_user"),
+							(String)result.get("pop3_pass")));
+		}
+		return map;
+	}
 
 	@Transactional
 	public void regMail(Message<?> msg) {
@@ -61,7 +81,7 @@ public class MailDao {
 		paramMap.put("mail_contenttype", MailbatUtil.convert(headers.get("mail_contentType")));
 		paramMap.put("contenttype", MailbatUtil.convert(headers.get("contentType")));
 		paramMap.put("mail_raw_md5", DigestUtils.md5Hex(headers.get("mail_raw").toString()));
-		jdbcTemplate.update(sql, paramMap);
+		namedJdbcTemplate.update(sql, paramMap);
 	}
 
 	private void insertMailBody(int id, Message<?> msg) {
@@ -80,7 +100,7 @@ public class MailDao {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("id", id);
 		paramMap.put("body_text", (String)msg.getPayload());
-		jdbcTemplate.update(sql, paramMap);
+		namedJdbcTemplate.update(sql, paramMap);
 	}
 
 	/**
@@ -96,7 +116,7 @@ public class MailDao {
 			sql += " from mail_body";
 		}
 		Map<String, Object> paramMap = new HashMap<>();
-		int newId = jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		int newId = namedJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 		paramMap.put("id", newId);
 		sql = "select count(*)";
 		if (fromMailHeader) {
@@ -104,7 +124,7 @@ public class MailDao {
 		} else {
 			sql += " from mail_header where id = :id";
 		}
-		int count = jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		int count = namedJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 		if (count == 0) {
 			return newId;
 		} else {
@@ -117,12 +137,12 @@ public class MailDao {
 	 * @param msg
 	 * @return true:登録済 / false:未登録
 	 */
-	public boolean isMailRegistered(Message<?> msg) {
+	public boolean isMailRegistered(Message msg) {
 		String sql = "select count(*) from mail_header"
 				+ " where mail_raw_md5 = :mailRawMd5";
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("mailRawMd5", DigestUtils.md5Hex(msg.getHeaders().get("mail_raw").toString()));
-		int count = jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
+		int count = namedJdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 		return count > 0;
 	}
 }
